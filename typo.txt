@@ -1,0 +1,78 @@
+洗唔洗	要不要
+使唔使	要不要
+駛唔駛	要不要
+畀	俾
+有無	有冇
+係邊	喺邊
+邊到	邊度
+哩	呢
+哩個	呢個
+哩啲	呢啲
+哩度	呢度
+哩樣	呢樣
+呢到	呢度
+黎緊	嚟緊
+我地	我哋
+哂	曬
+晒	曬
+有d	有啲
+果個	嗰個
+果到	嗰度
+果度	嗰度
+中意	鐘意
+噉	咁
+乜	咩
+依家	而家
+琴日	尋日
+麥當奴	麥當勞
+気	氣
+寿	壽
+一	1
+二	2
+三	3
+四	4
+五	5
+六	6
+七	7
+八	8
+九	9
+十	10
+裏	裡
+啓	啟
+滙豐	匯豐
+値	值
+眞	真
+真	真
+氷	冰
+姉	姊
+臺灣	台灣
+够	夠
+强	強
+酒巴	酒吧
+酒bar	酒吧
+酒 bar	酒吧
+㩒機	撳機
+㩒錢	撳錢
+野食	嘢食
+睇戲	睇電影
+戲睇	電影睇
+暢錢	唱錢
+差電	叉電
+舖	鋪
+s+	s plus
+紅10字	紅十字
+7101	711
+club house	clubhouse
+phase two	phase 2
+phase one	phase 1
+phase three	phase 3
+phase ii	phase 2
+phase i	phase 1
+phase iii	phase 3
+wash rooms	washrooms
+wash room	washrooms
+rest rooms	restrooms
+rest room	restroom
+centre	center
+foodcourt	food court
+café	cafe

@@ -1,0 +1,352 @@
+Rotating Log - INFO - ['data/project/mm', 'data/project/immd']
+Rotating Log - INFO - {'immd': 'data/project/immd/intent/intent_label.txt'}
+Rotating Log - INFO - {'immd': 'data/project/immd/keyword/slot_label.txt'}
+Rotating Log - INFO - {'immd': {'transit': 0, 'visit': 1, 'par_indian': 2, 'par_taiwan': 3, 'prc_transit': 4, 'crp': 5, 'marriage': 6, 'mbb_mainland_born_baby': 7, 'oversea_born_baby': 8, 'hkic_booking': 9, 'lost_hkic': 10, 'old_hong_kong': 11, 'ttps': 12, 'hsp_local': 13, 'hsp_overseas': 14, 'dependent': 15, 'roa_-_vepic,_hsp,_coe': 16, '7_years_vepic': 17, 'r2_extension': 18, 'visa_requirment': 19}}
+Rotating Log - INFO - {'immd': {'PAD': 0, 'UNK': 1, '': 2, 'O': 3}}
+Rotating Log - INFO - {'immd': ErnieForSequenceClassification(
+  (ernie): ErnieModel(
+    (embeddings): ErnieEmbeddings(
+      (word_embeddings): Embedding(40000, 1024, padding_idx=0, sparse=False)
+      (position_embeddings): Embedding(2048, 1024, sparse=False)
+      (token_type_embeddings): Embedding(4, 1024, sparse=False)
+      (task_type_embeddings): Embedding(16, 1024, sparse=False)
+      (layer_norm): LayerNorm(normalized_shape=[1024], epsilon=1e-12)
+      (dropout): Dropout(p=0.1, axis=None, mode=upscale_in_train)
+    )
+    (encoder): TransformerEncoder(
+      (layers): LayerList(
+        (0): TransformerEncoderLayer(
+          (self_attn): MultiHeadAttention(
+            (q_proj): Linear(in_features=1024, out_features=1024, dtype=float32)
+            (k_proj): Linear(in_features=1024, out_features=1024, dtype=float32)
+            (v_proj): Linear(in_features=1024, out_features=1024, dtype=float32)
+            (out_proj): Linear(in_features=1024, out_features=1024, dtype=float32)
+          )
+          (linear1): Linear(in_features=1024, out_features=4096, dtype=float32)
+          (dropout): Dropout(p=0, axis=None, mode=upscale_in_train)
+          (linear2): Linear(in_features=4096, out_features=1024, dtype=float32)
+          (norm1): LayerNorm(normalized_shape=[1024], epsilon=1e-12)
+          (norm2): LayerNorm(normalized_shape=[1024], epsilon=1e-12)
+          (dropout1): Dropout(p=0.1, axis=None, mode=upscale_in_train)
+          (dropout2): Dropout(p=0.1, axis=None, mode=upscale_in_train)
+        )
+        (1): TransformerEncoderLayer(
+          (self_attn): MultiHeadAttention(
+            (q_proj): Linear(in_features=1024, out_features=1024, dtype=float32)
+            (k_proj): Linear(in_features=1024, out_features=1024, dtype=float32)
+            (v_proj): Linear(in_features=1024, out_features=1024, dtype=float32)
+            (out_proj): Linear(in_features=1024, out_features=1024, dtype=float32)
+          )
+          (linear1): Linear(in_features=1024, out_features=4096, dtype=float32)
+          (dropout): Dropout(p=0, axis=None, mode=upscale_in_train)
+          (linear2): Linear(in_features=4096, out_features=1024, dtype=float32)
+          (norm1): LayerNorm(normalized_shape=[1024], epsilon=1e-12)
+          (norm2): LayerNorm(normalized_shape=[1024], epsilon=1e-12)
+          (dropout1): Dropout(p=0.1, axis=None, mode=upscale_in_train)
+          (dropout2): Dropout(p=0.1, axis=None, mode=upscale_in_train)
+        )
+        (2): TransformerEncoderLayer(
+          (self_attn): MultiHeadAttention(
+            (q_proj): Linear(in_features=1024, out_features=1024, dtype=float32)
+            (k_proj): Linear(in_features=1024, out_features=1024, dtype=float32)
+            (v_proj): Linear(in_features=1024, out_features=1024, dtype=float32)
+            (out_proj): Linear(in_features=1024, out_features=1024, dtype=float32)
+          )
+          (linear1): Linear(in_features=1024, out_features=4096, dtype=float32)
+          (dropout): Dropout(p=0, axis=None, mode=upscale_in_train)
+          (linear2): Linear(in_features=4096, out_features=1024, dtype=float32)
+          (norm1): LayerNorm(normalized_shape=[1024], epsilon=1e-12)
+          (norm2): LayerNorm(normalized_shape=[1024], epsilon=1e-12)
+          (dropout1): Dropout(p=0.1, axis=None, mode=upscale_in_train)
+          (dropout2): Dropout(p=0.1, axis=None, mode=upscale_in_train)
+        )
+        (3): TransformerEncoderLayer(
+          (self_attn): MultiHeadAttention(
+            (q_proj): Linear(in_features=1024, out_features=1024, dtype=float32)
+            (k_proj): Linear(in_features=1024, out_features=1024, dtype=float32)
+            (v_proj): Linear(in_features=1024, out_features=1024, dtype=float32)
+            (out_proj): Linear(in_features=1024, out_features=1024, dtype=float32)
+          )
+          (linear1): Linear(in_features=1024, out_features=4096, dtype=float32)
+          (dropout): Dropout(p=0, axis=None, mode=upscale_in_train)
+          (linear2): Linear(in_features=4096, out_features=1024, dtype=float32)
+          (norm1): LayerNorm(normalized_shape=[1024], epsilon=1e-12)
+          (norm2): LayerNorm(normalized_shape=[1024], epsilon=1e-12)
+          (dropout1): Dropout(p=0.1, axis=None, mode=upscale_in_train)
+          (dropout2): Dropout(p=0.1, axis=None, mode=upscale_in_train)
+        )
+        (4): TransformerEncoderLayer(
+          (self_attn): MultiHeadAttention(
+            (q_proj): Linear(in_features=1024, out_features=1024, dtype=float32)
+            (k_proj): Linear(in_features=1024, out_features=1024, dtype=float32)
+            (v_proj): Linear(in_features=1024, out_features=1024, dtype=float32)
+            (out_proj): Linear(in_features=1024, out_features=1024, dtype=float32)
+          )
+          (linear1): Linear(in_features=1024, out_features=4096, dtype=float32)
+          (dropout): Dropout(p=0, axis=None, mode=upscale_in_train)
+          (linear2): Linear(in_features=4096, out_features=1024, dtype=float32)
+          (norm1): LayerNorm(normalized_shape=[1024], epsilon=1e-12)
+          (norm2): LayerNorm(normalized_shape=[1024], epsilon=1e-12)
+          (dropout1): Dropout(p=0.1, axis=None, mode=upscale_in_train)
+          (dropout2): Dropout(p=0.1, axis=None, mode=upscale_in_train)
+        )
+        (5): TransformerEncoderLayer(
+          (self_attn): MultiHeadAttention(
+            (q_proj): Linear(in_features=1024, out_features=1024, dtype=float32)
+            (k_proj): Linear(in_features=1024, out_features=1024, dtype=float32)
+            (v_proj): Linear(in_features=1024, out_features=1024, dtype=float32)
+            (out_proj): Linear(in_features=1024, out_features=1024, dtype=float32)
+          )
+          (linear1): Linear(in_features=1024, out_features=4096, dtype=float32)
+          (dropout): Dropout(p=0, axis=None, mode=upscale_in_train)
+          (linear2): Linear(in_features=4096, out_features=1024, dtype=float32)
+          (norm1): LayerNorm(normalized_shape=[1024], epsilon=1e-12)
+          (norm2): LayerNorm(normalized_shape=[1024], epsilon=1e-12)
+          (dropout1): Dropout(p=0.1, axis=None, mode=upscale_in_train)
+          (dropout2): Dropout(p=0.1, axis=None, mode=upscale_in_train)
+        )
+        (6): TransformerEncoderLayer(
+          (self_attn): MultiHeadAttention(
+            (q_proj): Linear(in_features=1024, out_features=1024, dtype=float32)
+            (k_proj): Linear(in_features=1024, out_features=1024, dtype=float32)
+            (v_proj): Linear(in_features=1024, out_features=1024, dtype=float32)
+            (out_proj): Linear(in_features=1024, out_features=1024, dtype=float32)
+          )
+          (linear1): Linear(in_features=1024, out_features=4096, dtype=float32)
+          (dropout): Dropout(p=0, axis=None, mode=upscale_in_train)
+          (linear2): Linear(in_features=4096, out_features=1024, dtype=float32)
+          (norm1): LayerNorm(normalized_shape=[1024], epsilon=1e-12)
+          (norm2): LayerNorm(normalized_shape=[1024], epsilon=1e-12)
+          (dropout1): Dropout(p=0.1, axis=None, mode=upscale_in_train)
+          (dropout2): Dropout(p=0.1, axis=None, mode=upscale_in_train)
+        )
+        (7): TransformerEncoderLayer(
+          (self_attn): MultiHeadAttention(
+            (q_proj): Linear(in_features=1024, out_features=1024, dtype=float32)
+            (k_proj): Linear(in_features=1024, out_features=1024, dtype=float32)
+            (v_proj): Linear(in_features=1024, out_features=1024, dtype=float32)
+            (out_proj): Linear(in_features=1024, out_features=1024, dtype=float32)
+          )
+          (linear1): Linear(in_features=1024, out_features=4096, dtype=float32)
+          (dropout): Dropout(p=0, axis=None, mode=upscale_in_train)
+          (linear2): Linear(in_features=4096, out_features=1024, dtype=float32)
+          (norm1): LayerNorm(normalized_shape=[1024], epsilon=1e-12)
+          (norm2): LayerNorm(normalized_shape=[1024], epsilon=1e-12)
+          (dropout1): Dropout(p=0.1, axis=None, mode=upscale_in_train)
+          (dropout2): Dropout(p=0.1, axis=None, mode=upscale_in_train)
+        )
+        (8): TransformerEncoderLayer(
+          (self_attn): MultiHeadAttention(
+            (q_proj): Linear(in_features=1024, out_features=1024, dtype=float32)
+            (k_proj): Linear(in_features=1024, out_features=1024, dtype=float32)
+            (v_proj): Linear(in_features=1024, out_features=1024, dtype=float32)
+            (out_proj): Linear(in_features=1024, out_features=1024, dtype=float32)
+          )
+          (linear1): Linear(in_features=1024, out_features=4096, dtype=float32)
+          (dropout): Dropout(p=0, axis=None, mode=upscale_in_train)
+          (linear2): Linear(in_features=4096, out_features=1024, dtype=float32)
+          (norm1): LayerNorm(normalized_shape=[1024], epsilon=1e-12)
+          (norm2): LayerNorm(normalized_shape=[1024], epsilon=1e-12)
+          (dropout1): Dropout(p=0.1, axis=None, mode=upscale_in_train)
+          (dropout2): Dropout(p=0.1, axis=None, mode=upscale_in_train)
+        )
+        (9): TransformerEncoderLayer(
+          (self_attn): MultiHeadAttention(
+            (q_proj): Linear(in_features=1024, out_features=1024, dtype=float32)
+            (k_proj): Linear(in_features=1024, out_features=1024, dtype=float32)
+            (v_proj): Linear(in_features=1024, out_features=1024, dtype=float32)
+            (out_proj): Linear(in_features=1024, out_features=1024, dtype=float32)
+          )
+          (linear1): Linear(in_features=1024, out_features=4096, dtype=float32)
+          (dropout): Dropout(p=0, axis=None, mode=upscale_in_train)
+          (linear2): Linear(in_features=4096, out_features=1024, dtype=float32)
+          (norm1): LayerNorm(normalized_shape=[1024], epsilon=1e-12)
+          (norm2): LayerNorm(normalized_shape=[1024], epsilon=1e-12)
+          (dropout1): Dropout(p=0.1, axis=None, mode=upscale_in_train)
+          (dropout2): Dropout(p=0.1, axis=None, mode=upscale_in_train)
+        )
+        (10): TransformerEncoderLayer(
+          (self_attn): MultiHeadAttention(
+            (q_proj): Linear(in_features=1024, out_features=1024, dtype=float32)
+            (k_proj): Linear(in_features=1024, out_features=1024, dtype=float32)
+            (v_proj): Linear(in_features=1024, out_features=1024, dtype=float32)
+            (out_proj): Linear(in_features=1024, out_features=1024, dtype=float32)
+          )
+          (linear1): Linear(in_features=1024, out_features=4096, dtype=float32)
+          (dropout): Dropout(p=0, axis=None, mode=upscale_in_train)
+          (linear2): Linear(in_features=4096, out_features=1024, dtype=float32)
+          (norm1): LayerNorm(normalized_shape=[1024], epsilon=1e-12)
+          (norm2): LayerNorm(normalized_shape=[1024], epsilon=1e-12)
+          (dropout1): Dropout(p=0.1, axis=None, mode=upscale_in_train)
+          (dropout2): Dropout(p=0.1, axis=None, mode=upscale_in_train)
+        )
+        (11): TransformerEncoderLayer(
+          (self_attn): MultiHeadAttention(
+            (q_proj): Linear(in_features=1024, out_features=1024, dtype=float32)
+            (k_proj): Linear(in_features=1024, out_features=1024, dtype=float32)
+            (v_proj): Linear(in_features=1024, out_features=1024, dtype=float32)
+            (out_proj): Linear(in_features=1024, out_features=1024, dtype=float32)
+          )
+          (linear1): Linear(in_features=1024, out_features=4096, dtype=float32)
+          (dropout): Dropout(p=0, axis=None, mode=upscale_in_train)
+          (linear2): Linear(in_features=4096, out_features=1024, dtype=float32)
+          (norm1): LayerNorm(normalized_shape=[1024], epsilon=1e-12)
+          (norm2): LayerNorm(normalized_shape=[1024], epsilon=1e-12)
+          (dropout1): Dropout(p=0.1, axis=None, mode=upscale_in_train)
+          (dropout2): Dropout(p=0.1, axis=None, mode=upscale_in_train)
+        )
+        (12): TransformerEncoderLayer(
+          (self_attn): MultiHeadAttention(
+            (q_proj): Linear(in_features=1024, out_features=1024, dtype=float32)
+            (k_proj): Linear(in_features=1024, out_features=1024, dtype=float32)
+            (v_proj): Linear(in_features=1024, out_features=1024, dtype=float32)
+            (out_proj): Linear(in_features=1024, out_features=1024, dtype=float32)
+          )
+          (linear1): Linear(in_features=1024, out_features=4096, dtype=float32)
+          (dropout): Dropout(p=0, axis=None, mode=upscale_in_train)
+          (linear2): Linear(in_features=4096, out_features=1024, dtype=float32)
+          (norm1): LayerNorm(normalized_shape=[1024], epsilon=1e-12)
+          (norm2): LayerNorm(normalized_shape=[1024], epsilon=1e-12)
+          (dropout1): Dropout(p=0.1, axis=None, mode=upscale_in_train)
+          (dropout2): Dropout(p=0.1, axis=None, mode=upscale_in_train)
+        )
+        (13): TransformerEncoderLayer(
+          (self_attn): MultiHeadAttention(
+            (q_proj): Linear(in_features=1024, out_features=1024, dtype=float32)
+            (k_proj): Linear(in_features=1024, out_features=1024, dtype=float32)
+            (v_proj): Linear(in_features=1024, out_features=1024, dtype=float32)
+            (out_proj): Linear(in_features=1024, out_features=1024, dtype=float32)
+          )
+          (linear1): Linear(in_features=1024, out_features=4096, dtype=float32)
+          (dropout): Dropout(p=0, axis=None, mode=upscale_in_train)
+          (linear2): Linear(in_features=4096, out_features=1024, dtype=float32)
+          (norm1): LayerNorm(normalized_shape=[1024], epsilon=1e-12)
+          (norm2): LayerNorm(normalized_shape=[1024], epsilon=1e-12)
+          (dropout1): Dropout(p=0.1, axis=None, mode=upscale_in_train)
+          (dropout2): Dropout(p=0.1, axis=None, mode=upscale_in_train)
+        )
+        (14): TransformerEncoderLayer(
+          (self_attn): MultiHeadAttention(
+            (q_proj): Linear(in_features=1024, out_features=1024, dtype=float32)
+            (k_proj): Linear(in_features=1024, out_features=1024, dtype=float32)
+            (v_proj): Linear(in_features=1024, out_features=1024, dtype=float32)
+            (out_proj): Linear(in_features=1024, out_features=1024, dtype=float32)
+          )
+          (linear1): Linear(in_features=1024, out_features=4096, dtype=float32)
+          (dropout): Dropout(p=0, axis=None, mode=upscale_in_train)
+          (linear2): Linear(in_features=4096, out_features=1024, dtype=float32)
+          (norm1): LayerNorm(normalized_shape=[1024], epsilon=1e-12)
+          (norm2): LayerNorm(normalized_shape=[1024], epsilon=1e-12)
+          (dropout1): Dropout(p=0.1, axis=None, mode=upscale_in_train)
+          (dropout2): Dropout(p=0.1, axis=None, mode=upscale_in_train)
+        )
+        (15): TransformerEncoderLayer(
+          (self_attn): MultiHeadAttention(
+            (q_proj): Linear(in_features=1024, out_features=1024, dtype=float32)
+            (k_proj): Linear(in_features=1024, out_features=1024, dtype=float32)
+            (v_proj): Linear(in_features=1024, out_features=1024, dtype=float32)
+            (out_proj): Linear(in_features=1024, out_features=1024, dtype=float32)
+          )
+          (linear1): Linear(in_features=1024, out_features=4096, dtype=float32)
+          (dropout): Dropout(p=0, axis=None, mode=upscale_in_train)
+          (linear2): Linear(in_features=4096, out_features=1024, dtype=float32)
+          (norm1): LayerNorm(normalized_shape=[1024], epsilon=1e-12)
+          (norm2): LayerNorm(normalized_shape=[1024], epsilon=1e-12)
+          (dropout1): Dropout(p=0.1, axis=None, mode=upscale_in_train)
+          (dropout2): Dropout(p=0.1, axis=None, mode=upscale_in_train)
+        )
+        (16): TransformerEncoderLayer(
+          (self_attn): MultiHeadAttention(
+            (q_proj): Linear(in_features=1024, out_features=1024, dtype=float32)
+            (k_proj): Linear(in_features=1024, out_features=1024, dtype=float32)
+            (v_proj): Linear(in_features=1024, out_features=1024, dtype=float32)
+            (out_proj): Linear(in_features=1024, out_features=1024, dtype=float32)
+          )
+          (linear1): Linear(in_features=1024, out_features=4096, dtype=float32)
+          (dropout): Dropout(p=0, axis=None, mode=upscale_in_train)
+          (linear2): Linear(in_features=4096, out_features=1024, dtype=float32)
+          (norm1): LayerNorm(normalized_shape=[1024], epsilon=1e-12)
+          (norm2): LayerNorm(normalized_shape=[1024], epsilon=1e-12)
+          (dropout1): Dropout(p=0.1, axis=None, mode=upscale_in_train)
+          (dropout2): Dropout(p=0.1, axis=None, mode=upscale_in_train)
+        )
+        (17): TransformerEncoderLayer(
+          (self_attn): MultiHeadAttention(
+            (q_proj): Linear(in_features=1024, out_features=1024, dtype=float32)
+            (k_proj): Linear(in_features=1024, out_features=1024, dtype=float32)
+            (v_proj): Linear(in_features=1024, out_features=1024, dtype=float32)
+            (out_proj): Linear(in_features=1024, out_features=1024, dtype=float32)
+          )
+          (linear1): Linear(in_features=1024, out_features=4096, dtype=float32)
+          (dropout): Dropout(p=0, axis=None, mode=upscale_in_train)
+          (linear2): Linear(in_features=4096, out_features=1024, dtype=float32)
+          (norm1): LayerNorm(normalized_shape=[1024], epsilon=1e-12)
+          (norm2): LayerNorm(normalized_shape=[1024], epsilon=1e-12)
+          (dropout1): Dropout(p=0.1, axis=None, mode=upscale_in_train)
+          (dropout2): Dropout(p=0.1, axis=None, mode=upscale_in_train)
+        )
+        (18): TransformerEncoderLayer(
+          (self_attn): MultiHeadAttention(
+            (q_proj): Linear(in_features=1024, out_features=1024, dtype=float32)
+            (k_proj): Linear(in_features=1024, out_features=1024, dtype=float32)
+            (v_proj): Linear(in_features=1024, out_features=1024, dtype=float32)
+            (out_proj): Linear(in_features=1024, out_features=1024, dtype=float32)
+          )
+          (linear1): Linear(in_features=1024, out_features=4096, dtype=float32)
+          (dropout): Dropout(p=0, axis=None, mode=upscale_in_train)
+          (linear2): Linear(in_features=4096, out_features=1024, dtype=float32)
+          (norm1): LayerNorm(normalized_shape=[1024], epsilon=1e-12)
+          (norm2): LayerNorm(normalized_shape=[1024], epsilon=1e-12)
+          (dropout1): Dropout(p=0.1, axis=None, mode=upscale_in_train)
+          (dropout2): Dropout(p=0.1, axis=None, mode=upscale_in_train)
+        )
+        (19): TransformerEncoderLayer(
+          (self_attn): MultiHeadAttention(
+            (q_proj): Linear(in_features=1024, out_features=1024, dtype=float32)
+            (k_proj): Linear(in_features=1024, out_features=1024, dtype=float32)
+            (v_proj): Linear(in_features=1024, out_features=1024, dtype=float32)
+            (out_proj): Linear(in_features=1024, out_features=1024, dtype=float32)
+          )
+          (linear1): Linear(in_features=1024, out_features=4096, dtype=float32)
+          (dropout): Dropout(p=0, axis=None, mode=upscale_in_train)
+          (linear2): Linear(in_features=4096, out_features=1024, dtype=float32)
+          (norm1): LayerNorm(normalized_shape=[1024], epsilon=1e-12)
+          (norm2): LayerNorm(normalized_shape=[1024], epsilon=1e-12)
+          (dropout1): Dropout(p=0.1, axis=None, mode=upscale_in_train)
+          (dropout2): Dropout(p=0.1, axis=None, mode=upscale_in_train)
+        )
+      )
+    )
+    (pooler): ErniePooler(
+      (dense): Linear(in_features=1024, out_features=1024, dtype=float32)
+      (activation): Tanh()
+    )
+  )
+  (dropout): Dropout(p=0.1, axis=None, mode=upscale_in_train)
+  (classifier): Linear(in_features=1024, out_features=20, dtype=float32)
+)}
+werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8081
+ * Running on http://10.6.71.96:8081
+werkzeug - INFO - [33mPress CTRL+C to quit[0m
+Rotating Log - INFO - Inference Input:
+Rotating Log - INFO - {'subject': '', 'content': '敬啟者：您好！關於線下提交永居申請事宜，本人有如下問題想諮詢貴處：1.提交永居的話，是否需要提交給居留權組？地點是否在灣仔辦公室？在哪一層樓的哪個窗口交資料？2.是否需要提前預約？如需，如何預約？3.有哪些文件是在交資料時必須提交的？哪些是可以候補的？4.交完資料後，是否會有回執，證明本人的資料是交過的？5.如果線下遞交，是否一定要申請人本人親自前往？煩請閣下就以上問題給予指導，不勝感激！', 'project': 'immd'}
+Rotating Log - INFO - immd
+Rotating Log - INFO - 
+Rotating Log - INFO - 敬啟者：您好！關於線下提交永居申請事宜，本人有如下問題想諮詢貴處：1.提交永居的話，是否需要提交給居留權組？地點是否在灣仔辦公室？在哪一層樓的哪個窗口交資料？2.是否需要提前預約？如需，如何預約？3.有哪些文件是在交資料時必須提交的？哪些是可以候補的？4.交完資料後，是否會有回執，證明本人的資料是交過的？5.如果線下遞交，是否一定要申請人本人親自前往？煩請閣下就以上問題給予指導，不勝感激！
+Rotating Log - INFO - 
+Rotating Log - INFO - 敬啟者：您好！關於線下提交永居申請事宜，本人有如下問題想諮詢貴處：1.提交永居的話，是否需要提交給居留權組？地點是否在灣仔辦公室？在哪一層樓的哪個窗口交資料？2.是否需要提前預約？如需，如何預約？3.有哪些文件是在交資料時必須提交的？哪些是可以候補的？4.交完資料後，是否會有回執，證明本人的資料是交過的？5.如果線下遞交，是否一定要申請人本人親自前往？煩請閣下就以上問題給予指導，不勝感激！
+Rotating Log - INFO - start inferring...
+Rotating Log - INFO - intent results:
+Rotating Log - INFO - [{'topic': '7_years_vepic', 'con': 0.9880441}]
+root - ERROR - Exception occurred
+Traceback (most recent call last):
+  File "nlp_pipeline.py", line 248, in get_topic_and_keywords
+    intent_labels, slots = nlu(text, project)
+  File "nlp_pipeline.py", line 142, in nlu
+    intent_labels, slots = nlu_predict_m(
+  File "/opt/ct-nlp/email-classification/nlu_infer.py", line 204, in nlu_predict_m
+    joint_model.eval()
+AttributeError: 'NoneType' object has no attribute 'eval'
+werkzeug - INFO - 127.0.0.1 - - [22/Dec/2023 15:12:26] "POST /api/classify_email_and_get_keywords HTTP/1.1" 200 -

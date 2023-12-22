@@ -1,0 +1,72 @@
+/opt
+--/nfs-data
+  --/faqs
+    --abc123.xlsx
+  --/graphs
+
+
+synonyms for shop
+
+
+if len(shoptype)==1 or len(foodtype_==1):
+    show show attributes (address, contact, opening hours) 
+
+# consider whether need to change answer type to follow-up question
+for options in foodtype and shoptype:
+    if click option:
+        show attributes (address, contact, opening hours)
+
+
+remove stop words for speaking language
+唔冇佢乜嘅咗哦嘢嗰啲喺啱咁噉哋俾畀瞓攞嚟咋噃嚿㗎嘞喇啦吖喎囉咩欸嗱嘥嗮啩吓揸晒哂睇搵揾攰唉哎吔呀嘛呵喂
+
+How to create a self-signed PEM file
+openssl req -newkey rsa:2048 -new -nodes -x509 -days 3650 -keyout key.pem -out cert.pem
+
+docker inspect 86484609b48d | grep "IPAddress"
+
+openssl s_client -connect my_domain.com:7687
+
+
+# mounting server
+su -
+mount -t nfs svacs-nfs01.vabot.org:/opt/nfs-data/ /opt/sino/nlp-core/astrinlp/core/application/voicebot/nfs-data
+
+
+# Python: use logging library
+
+# Build docker image
+docker build -t <image name> .
+docker build -t sino-nlp:v2.0-rc.3 .
+docker save sino-nlp:v2.0-rc.3 | gzip > sino-nlpv2.0-rc3.tar.gz
+scp sino-nlpv2.0-rc3.tar.gz usnmp@zotac-08.vabot.org:/opt/data/mxlc/release/ART342CP/nlp
+docker-compose up -d docker-nlp_v20rc2.yml
+
+
+# cpu vs gpu
+cpu: 30 minutes to go for 2 epochs --> 450 minutes to finish 30 epochs
+gpu: 8 minutes to finish 50 epochs
+
+# check port in use:
+netstat -tulnp
+t – Show TCP
+u – Show UDP
+l – Show only listening processes (netstat can show both listening and all established connections, i.e. as a client too)
+n – Do not resolve network IP address names or port numbers
+p – Show the process name that is listening on the port
+
+# Print you PID of process bound on that port
+fuser 7687/tcp
+# Kill process
+fuser -k 7687/tcp
+
+# Listing the firewall rules
+iptables -xvn -L
+
+
+
+CREATE CONSTRAINT constraint_name IF NOT EXISTS FOR (book:Book) REQUIRE book.isbn IS UNIQUE
+DROP CONSTRAINT constraint_name
+
+QA
+similarity

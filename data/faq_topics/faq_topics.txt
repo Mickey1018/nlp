@@ -1,0 +1,14 @@
+nothing
+carpark_information
+carpark_promotion
+carpark_payment
+booking
+transportation
+comingsoon
+membership
+promotion
+mallevents
+leasing
+help
+network
+facilitytype

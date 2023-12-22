@@ -1,0 +1,20 @@
+version: '3'
+services:
+  ct_immd_nlp:
+    image: ct-immd-nlp:v0.9
+    ports:
+      - "8080:8080"
+    volumes:
+      - /opt/email_classifier/nlp/data:/app/data/project
+      # - /opt/email_classifier/nlp/ckpt:/app/data/ckpt/nlu/multi
+      # - ./nfs-data:/app/nfs-data
+      # - ./logs:/app/logs 
+    command: >
+      bash -c "python nlp_pipeline.py"
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           device_ids: [ '0' ]
+    #           capabilities: [ gpu ]

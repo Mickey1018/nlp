@@ -1,0 +1,110 @@
+ver sino-nlpv1.0-rc.1 13-Sep-2022
+----------------------------------
+1. The released NLP model supports end-to-end question answering in Chinese, including 
+   dialog intent classfication, name entities recognitions, text semantic searching, and
+   answer generation. The next release will include question answering in English.
+
+
+ver sino-nlpv1.0-rc.2 23-Sep-2022
+----------------------------------
+Main Enhancement:
+  1. NLU model is retrianed with more restaurant names and shop names to increase the 
+     accuracy of detecting intents and name entities.
+  2. There was a question that took a lond time to answer, this was due to wrong detection
+     of intent. The problem is fixed and the question can now be processed within a short
+     period of time.
+  3. Exception cases are handled to deal with wrong format of input parameters.
+  4. For facility such as 禮賓處, it's english name "concierge" cannot be detected in
+     previous release, therefore english name of some facilities are used as training set
+     for NLU model training. 
+
+
+ver sino-nlpv2.0-rc.1 17-Oct-2022
+---------------------------------
+Main Features
+  1. Support language in English and Mardarin  
+
+
+ver sino-nlpv2.0-rc.2 23-Nov-2022
+---------------------------------
+Main Features
+  1. Support question answering for PP site in Cantonese, English, and Mardarin 
+  2. Support versioning for FAQ and KG
+  3. Bug is fixed for topic related to shoptype and shopproduct
+  4. Answers to TTS are fine tuned
+
+
+ver sino-nlpv2.0-rc.3 8-Dec-2022
+---------------------------------
+Main Features
+  1. Bug fix for versioning of FAQ and KG
+  2. comments to chatbot are reviewd 
+
+
+ver sino-nlpv2.0-rc.4 20-Dec-2022
+---------------------------------
+Main Features
+  1. Bug fix for publishing KG
+  2. small talk is implemented
+  3. similarity model, nlu model is retrained for better performance 
+
+
+ver sino-nlpv2.0-rc.4-patch1 22-Dec-2022
+---------------------------------
+Main Features
+  1. add feature to publish function
+  2. support multiple FAQ excel files
+
+
+ver sino-nlpv2.0-rc.4-patch2 27-Jan-2023
+---------------------------------
+Main Features
+  1. Data for knowledge graph can be automatically added to neo4j graph database once after docker container is started
+  2. If user only input the restaurant name or shop name without other words in the chatbot, information of the restaurants
+     or shops will be provided directly as answer.
+  3. NLP models for classifiying intention and capturing name entities are retrained according to test results from SINO. 
+
+
+ver sino-nlpv2.1 7-Feb-2023
+---------------------------------
+Main Features
+  1. According to QA testing results for release sino-nlpv2.0-rc.4-patch2, Ner model and intent classfication model are retrained.
+  2. Bug fix for publish graph function
+  3. support dynamic configuration under docker compose file
+
+
+ver sino-nlpv2.1p1 13-Feb-2023
+---------------------------------
+Main Features
+  1. According to QA testing results for release sino-nlpv2.1, Ner model and intent classfication model are retrained.
+  2. Bug fix for function of editing and publishing graph
+
+
+ver sino-nlpv2.1p2 17-Feb-2023
+---------------------------------
+Main Features
+  1. According to QA testing results for release sino-nlpv2.1p1, Ner model and intent classfication model are retrained.
+  2. turn off the debug mode, such that programme will not run twice when it is being started.
+
+
+ver sino-nlpv2.1p3 07-March-2023
+---------------------------------
+Main Features
+  1. According to QA testing and sino UAT results for release sino-nlpv2.1p2, Ner model and intent classfication model are retrained.
+
+
+ver sino-nlpv2.1p4 17-March-2023
+---------------------------------
+Main Features
+  1. According to QA testing and sino UAT results for release sino-nlpv2.1p3, Ner model and intent classfication model are retrained.
+  2. FAQ tables are updated
+
+
+ver sino-nlpv2.1p5 21-March-2023
+---------------------------------
+Main Features
+  1. According to QA testing and sino UAT results for release sino-nlpv2.1p4, Ner model and intent classfication model are retrained.
+  2. FAQ tables are updated
+
+
+$Author: MickeyFung $ on $Date: 2023-03-21 $

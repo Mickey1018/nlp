@@ -1,0 +1,1 @@
+{"do_lower_case": false, "encoding": "utf8", "unk_token": "[UNK]", "sep_token": "[SEP]", "pad_token": "[PAD]", "cls_token": "[CLS]", "mask_token": "[MASK]", "model_max_length": 514, "tokenizer_class": "ErnieMTokenizer"}

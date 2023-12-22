@@ -1,0 +1,2 @@
+training id: 1
+Final best macro f1 score: 0.99220

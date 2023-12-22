@@ -1,0 +1,18 @@
+# ignore files and folders
+Dockerfile
+.git
+.cache
+*.md
+mount/
+notes.txt
+update_kg.py
+test_callback.py
+data/ernie_2_base_en
+data/ernie_3_medium_zh
+data/nlp_model_params
+data/nlp_model_vocabs
+play.py
+chatgpt_simple.py
+chatapp.py
+*.tar.gz
+
