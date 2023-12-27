@@ -1,3 +1,4 @@
+from datetime import datetime
 from pprint import pprint
 import logging
 from logging.handlers import RotatingFileHandler
@@ -16,14 +17,17 @@ from paddlenlp import Taskflow
 from paddlenlp.transformers import ErnieMTokenizer, ErnieMModel
 from paddlenlp.transformers import AutoModelForSequenceClassification, AutoTokenizer
 
+from nlu_multilabel_train import multilable_classification_train
 from nlu_multilabel_infer import multilable_classification_infer
 from utils import has_child_directories, list_child_directories
 from configuration import Config
 from segmentation import segmentate_sentence, extract_key_word
 from preprocessing import preprocess, download_nltk
-from nlu_ner_train import JointModel_M
+# from nlu_ner_train import JointModel_M
+from nlu_train import JointModel_M
 from nlu_infer import ErnieTokenizer, ErnieModel, JointModel, load_dict
-from nlu_ner_infer import nlu_predict, nlu_predict_m
+# from nlu_ner_infer import nlu_predict, nlu_predict_m
+from nlu_infer import nlu_predict, nlu_predict_m
 from kg_qa import get_answer_from_mall_kg
 from kg_qa_estate import get_answer_from_estate_kg
 from similarity_infer import get_answer_from_faq
@@ -40,7 +44,7 @@ from nlu_train import nlu_model_train
 logger = logging.getLogger("Rotating Log")
 logger.setLevel(logging.INFO)
 logging.basicConfig(filename='./log/nlp.log', filemode='w', format='%(name)s - %(levelname)s - %(message)s')
-handler = RotatingFileHandler("./log/nlp.log", maxBytes=10240, backupCount=5)
+handler = RotatingFileHandler("./log/nlp.log", maxBytes=1000000, backupCount=5)
 logger.addHandler(handler)
 
 app = Flask(__name__)
@@ -49,6 +53,9 @@ port = Config.port
 
 # initialize executor
 executor = ThreadPoolExecutor(2)
+
+converter = opencc.OpenCC('t2s.json')
+converter_s2t = opencc.OpenCC('s2t.json')
 
 """
 def get_parser():
@@ -117,15 +124,12 @@ def nlu(input_text, project):
     intent_model = proj_intent_model.get(project)
     intent_tokenizer = proj_intent_tokenizer.get(project)
     ner_model = proj_ner_model.get(project)
-    logger.info('type of ner model:')
-    logger.info(type(ner_model))
-    logger.info(ner_model)
     ner_tokenizer = proj_ner_tokenizer.get(project)
-    nlu_model = proj_model.get(project)
     id2intent = proj_id2intent.get(project)
     id2slot = proj_id2slot.get(project)
 
     # part 1: intents (multiple)
+    logger.info('start inferring intent...')
     all_intent_results = multilable_classification_infer(
         intent_model, 
         intent_tokenizer,
@@ -139,27 +143,24 @@ def nlu(input_text, project):
         text=input_text
     )
     # assume process with one text only
-    logger.info('start inferring...')
-    intent_result = all_intent_results[0]
-    logger.info('intent results:')
-    logger.info(intent_result)
-
+    intent_result = all_intent_results[0]  # take the first result from batch
 
     # part 2: keywords
-    slots = nlu_predict_m(
+    logger.info('start inferring keyword...')
+    _, slot_result = nlu_predict_m(
         input_text, 
         ner_model, 
         ner_tokenizer, 
         id2intent, 
         id2slot, 
-        None
+        converter=converter
     )
     # elif lang in ["zh-hk", "zh-cn"]:
     #     intent_labels, slots = nlu_predict(input_text, nlu_model_zh_mall, nlu_zh_tokenizer, id2intent, id2slot, converter)        
     # elif lang in ["en"]:
     #     intent_labels, slots = nlu_predict(input_text, nlu_model_en_mall, nlu_en_tokenizer, id2intent, id2slot, converter)
     
-    return intent_result, slots
+    return intent_result, slot_result
     # return intent, intent_prob, slots
 
 """
@@ -232,18 +233,23 @@ def get_topic_and_keywords():
     model_is_in_training = False
     # get all job's status
     # jobs = {1:'in training', 2:'in training'}
-    for job_id, job_status in jobs.items():
-        # if see 'in training', do not do inference
-        if job_status == 'in training':
-            model_is_in_training = True
-            break
+    training_ids = jobs.keys()
+    if training_ids:
+        for training_id in training_ids:
+            status = jobs[training_id].get("status")
+            if status == 0:
+                model_is_in_training = True
+                break
+    
     if model_is_in_training:
+        logger.info('There is training job right now, cannot do inferring')
         results = {
             "success": False,
             "error": {
                 "reason": "NLP model is in training"
             }
         }
+        return json.dumps(results, ensure_ascii=False, indent=3)
 
     ########################################## Check training End ##########################################
 
@@ -253,18 +259,18 @@ def get_topic_and_keywords():
         text = preprocess(text)
     
         # NLU
-        intent_labels, slots = nlu(text, project)
-        logger.info("intent:")
-        logger.info(intent_labels)
-        logger.info("slots:")
-        logger.info(slots)
+        intent_result, slot_result = nlu(text, project)
+        logger.info("intent result:")
+        logger.info(intent_result)
+        logger.info("keyword result:")
+        logger.info(slot_result)
 
         ########################################## NLP End #####################################################
         results = {
             "success": True, 
                 "data": {
-                    "category": intent_labels,
-                    "keywords": slots
+                    "category": intent_result,
+                    "keywords": slot_result
                 } 
             }
 
@@ -670,49 +676,80 @@ def train_nlp_models_asyn():
     logger.info("dataset is ok!")
     logger.info("now moving to model training section!")
     
-    job_id = random.randint(1, 100)
-    executor.submit(job_train_nlu, job_id, project_path)
+    # generate training id
+    training_id = None
+    job_ids = jobs.keys()
+    if not job_ids:
+        training_id = "id-0001"
+    if job_ids:
+        job_ids = job_ids.sort()
+        last_job_id = job_ids[-1]
+        training_id = f"id-000{last_job_id+1}"
+    msg = f'training id is {training_id}'
+    logger.info(msg)
 
+    # pass training job to thread
+    executor.submit(job_train_nlu, training_id, project_path)
+
+    # return API result
     results = {
         "success": True,
         "data": {
-            "job_id": job_id
+            "training_id": training_id
         }
     }
 
     return json.dumps(results, ensure_ascii=False, indent=3)
 
 
-def job_train_nlu(job_id, project_path):
-    
-    # log job
-    jobs[job_id] = "in training"
+def job_train_nlu(training_id, project_path):
+    jobs[training_id] = {}
+    # update job status: 0-in training; 1-finish training 
+    jobs[training_id]["status"] = 0
+    now = datetime.now()
+    logger.info(now)
+    jobs[training_id]["training_start"] = now.strftime("%d/%m/%Y %H:%M:%S")
     logger.info(jobs)
 
     # use nlu_train.py to fine-tune nlp model
     train_success = True
 
     try:
-        nlu_model_train(
+        # train intent model
+        logger.info('start training for intent model')
+        result_intent = multilable_classification_train(
+            training_id, 
+            project_path, 
+            batch_size=1, 
+            epochs=5,
+            logging_steps=5, 
+        )
+        jobs[training_id]["result_intent"] = result_intent
+        logger.info('end training for intent model')
+
+        # train ner model
+        logger.info('start training for ner model')
+        result_ner = nlu_model_train(
             logger,
             project_path, 
             lang=None, 
-            num_epoch=50, 
-            batch_size=16, 
-            max_seq_len=1024, 
+            num_epoch=1, 
+            batch_size=4, 
+            max_seq_len=512, 
             learning_rate=3e-5,
             weight_decay=0.01, 
             warmup_proportion=0.1, 
-            max_grad_norm=1.0, 
-            seed=666, 
+            max_grad_norm=1.0,
             log_step=50, 
-            eval_step=100, 
-            use_gpu=True
+            eval_step=100
         )
+        jobs[training_id]["result_ner"] = result_ner
+        logger.info('end training for ner model')
+
 
     except Exception as e:
-        # update jobs
-        jobs[job_id] = "training was not successful"
+        # update job status with error message
+        jobs[training_id] = str(e)
         
         train_success = False
 
@@ -728,8 +765,10 @@ def job_train_nlu(job_id, project_path):
 
 
     if train_success:
-        # update jobs
-        jobs[job_id] = "training finished"
+        # update job status: 0-in training; 1-finish training 
+        jobs[training_id]["status"] = 1
+        now = datetime.now()
+        jobs[training_id]["training_end"] = now.strftime("%d/%m/%Y %H:%M:%S")
         logger.info("Training success!")
 
 
@@ -741,7 +780,7 @@ def get_training_job_status():
     """
     try:
         content = request.json
-        job_id = content.get("job_id")
+        training_id = content.get("training_id")
 
     except Exception as e:
         results = {
@@ -753,12 +792,27 @@ def get_training_job_status():
         return json.dumps(results, ensure_ascii=False, indent=3)
     
     try:
-        status = jobs[job_id]
+        status = jobs[training_id].get("status")
+        training_start = jobs[training_id].get("training_start")
+        training_end = jobs[training_id].get("training_end")
+        training_result_ner = jobs[training_id].get("result_ner")
+        training_result_intent = jobs[training_id].get("result_intent")
+
         results = {
             "success": True,
             "data": {
-                "job_id": job_id,
-                "status": status
+                "training_id": training_id,
+                "status": status,
+                "training_start": training_start,
+                "training_end": training_end,
+                "result": {
+                    "intent": training_result_intent,
+                    "keyword": training_result_ner
+                },
+                "reason": [
+                    "insufficient training data",
+                    "number of intents out of scope"
+                ]
             }
         }
         json_results = json.dumps(results, ensure_ascii=False, indent=3)
@@ -768,7 +822,7 @@ def get_training_job_status():
     except Exception as e:
         results = {
             "success": False,
-            "job_id": job_id,
+            "training_id": training_id,
             "error": {
                 "reason": str(e) 
             }
@@ -915,7 +969,7 @@ if __name__ == '__main__':
 
     nlu_transformer = "ernie-m-base"
     nlu_tokenizer = ErnieMTokenizer.from_pretrained(nlu_transformer)
-    ernie = ErnieMModel.from_pretrained(nlu_transformer)
+    ernie_m = ErnieMModel.from_pretrained(nlu_transformer)
 
     proj_intent_path = {}
     proj_keyword_path = {}
@@ -954,13 +1008,11 @@ if __name__ == '__main__':
             proj_slot2id[proj], proj_id2slot[proj] = load_dict(slot_path)
             
             # get project ckpt dir ---> NER
-            ckpt_ner_path = os.path.join(parent_dir, proj, "ckpt_ner", "best.pdparams")
+            ckpt_ner_path = os.path.join(parent_dir, proj, "ckpt", "best.pdparams")
             if os.path.exists(ckpt_ner_path):
-                proj_ner_model[proj] = JointModel_M(
-                    ernie, 
-                    len(proj_slot2id[proj]), 
-                    dropout=0.1).load_dict(paddle.load(ckpt_ner_path)
-                )
+                temp_ner_model = JointModel_M(ernie_m, len(proj_slot2id[proj]), len(proj_intent2id[proj]), dropout=0.1)
+                temp_ner_model.load_dict(paddle.load(ckpt_ner_path))
+                proj_ner_model[proj] = temp_ner_model
                 proj_ner_tokenizer[proj] = nlu_tokenizer
 
             # get project ckpt dir ---> intent

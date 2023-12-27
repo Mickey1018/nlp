@@ -48,10 +48,28 @@ def params_saving(save_dir, device):
         f.writelines("------------------- end -------------------")
 
 
-def multilable_classification_train(train_id, dataset_dir, model_name="ernie-3.0-xbase-zh", seed=3, device="gpu", label_file="intent_label.txt", 
-train_dir="train", dev_dir="dev", max_seq_length=1024, batch_size=4, learning_rate=3e-5, epochs=10, 
-init_from_ckpt=None, warmup_steps=0, weight_decay=0.0, early_stop=False, early_stop_nums=3, warmup=True, 
-logging_steps=5, intent_dir="intent"):
+def multilable_classification_train(
+    train_id, 
+    dataset_dir, 
+    model_name="ernie-3.0-xbase-zh", 
+    seed=3, 
+    device="gpu", 
+    label_file="intent_label.txt", 
+    train_dir="train", 
+    dev_dir="dev", 
+    max_seq_length=1024, 
+    batch_size=4, 
+    learning_rate=3e-5, 
+    epochs=10, 
+    init_from_ckpt=None, 
+    warmup_steps=0, 
+    weight_decay=0.0, 
+    early_stop=False, 
+    early_stop_nums=3, 
+    warmup=True, 
+    logging_steps=5, 
+    intent_dir="intent"
+    ):
     """
     Training a multi label classification model
     Local dataset directory should include train.txt, dev.txt and label.txt
@@ -184,6 +202,12 @@ logging_steps=5, intent_dir="intent"):
     
     logger.info("Save best macro f1 text classification model in %s" % (save_dir))
 
+    if best_f1_score >= 0.85:
+        return 'good'
+    elif 0.7 <= best_f1_score < 0.85:
+        return 'acceptable'
+    elif best_f1_score < 0.7:
+        return 'fail'
 
 if __name__ == "__main__":
     multilable_classification_train(1, "data/project/immd")

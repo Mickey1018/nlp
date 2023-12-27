@@ -98,7 +98,7 @@ def multilable_classification_infer(model, tokenizer, id2intent, device='cpu',
                 temp_dict = {}
                 if p > 0.5:
                     temp_dict["topic"] = id2intent[i]
-                    temp_dict["con"] = p
+                    temp_dict["con"] = float(p)
                     temp_result.append(temp_dict)
             results.append(temp_result)
 

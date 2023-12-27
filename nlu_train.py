@@ -475,6 +475,13 @@ def nlu_model_train(logger, project_path, lang=None, num_epoch=100, batch_size=1
             global_step += 1
     logger.info("Finish training!")
 
+    if slot_best_f1 >= 0.85:
+        return 'good'
+    elif 0.7 <= slot_best_f1 < 0.85:
+        return 'acceptable'
+    elif slot_best_f1 < 0.7:
+        return 'fail'
+
 
 def evaluate(joint_model, data_loader, intent_metric, slot_metric):
 
