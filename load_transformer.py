@@ -1,6 +1,6 @@
 import dill as pickle
 import joblib
-from paddlenlp.transformers import AutoModel, AutoTokenizer
+from paddlenlp.transformers import AutoModel, AutoTokenizer, AutoModelForSequenceClassification
 from configuration import Config
 from nlu_infer import ErnieTokenizer, ErnieModel, ErnieMTokenizer, ErnieMModel
 from preprocessing import download_nltk
@@ -17,10 +17,12 @@ download_nltk()
 # nlu_transformer_zh = "ernie-3.0-xbase-zh"
 # nlu_transformer_en = "ernie-2.0-base-en"
 nlu_transformer_multi = "ernie-m-base"
+model_name = "ernie-3.0-xbase-zh"
 
 # nlu_zh_tokenizer = ErnieTokenizer.from_pretrained(nlu_transformer_zh)
 # nlu_en_tokenizer = ErnieTokenizer.from_pretrained(nlu_transformer_en)
 nlu_multi_tokenizer = ErnieMTokenizer.from_pretrained(nlu_transformer_multi)
+tokenizer = AutoTokenizer.from_pretrained(model_name)
 
 # ernie_zh = ErnieModel.from_pretrained(nlu_transformer_zh)
 # ernie_en = ErnieModel.from_pretrained(nlu_transformer_en)
