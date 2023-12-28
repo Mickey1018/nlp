@@ -11,13 +11,15 @@ from preprocessing import preprocess, lemmatizer
 from configuration import Config
 
 
-def create_intent_label(input_path, col="label"):
+def create_intent_label(
+    input_path, 
+    col="label", 
+    output_path = './data/nlu/intent_label.txt'
+    ):
 
     df = pd.read_excel(input_path, sheet_name=0)
     df = df.replace({np.nan: None})
     intent_labels = df[col].unique()
-
-    output_path = './data/nlu/intent_label.txt'
 
     with open(output_path, 'w', encoding='utf-8') as out:
         for i in range(len(intent_labels)):
@@ -27,21 +29,26 @@ def create_intent_label(input_path, col="label"):
                 out.write(intent_labels[i].lower()+'\n')
 
 
-def create_slot_label(input_path, col="text_with_entity", lang=None):
+def create_slot_label(
+    input_path, 
+    col="text_with_entity", 
+    lang=None, 
+    output_path = './data/nlu/slot_label.txt'
+    ):
     df = pd.read_excel(input_path, sheet_name=0)
     df = df.replace({np.nan: None})
     df = df[col]
     rows = df.shape[0]
     entities = set()
+
     for i in range(rows):
+        print(i)
         sent_w_entities = df.loc[i]
         _, _, tags = extract_entity(sent_w_entities, lang=None)
         for tag in tags:
             if tag not in entities:
                 entities.add(tag)
     entities = list(entities)
-
-    output_path = './data/nlu/slot_label.txt'
 
     with open(output_path, 'w', encoding='utf-8') as out:
         out.write('PAD'+'\n')
@@ -262,25 +269,58 @@ def make_dataset(project_path, lang=None, split=False, test_size=0.2, delete_and
 def annotate_segmented_text(annotated: list):
     for i in range(len(annotated)):
         if annotated[i].split("_")[0] == "[":
+            
             # get information about position and entity type
+            
+            # get keyword
             start = i + 1
             end = start
             while annotated[end].split("_")[0] != "]":
                 end += 1
-            assert annotated[end + 1].split("_")[0] == "(" and annotated[end + 3].split("_")[0] == ")", "wrong format"
-            entity_type = annotated[end + 2].split("_")[0]
+          
+            # get entity type
+            assert annotated[end+1].split("_")[0] == '(', "[xxx] should be follow by (yyy)"
+            entity_type = annotated[end+2].split("_")[0]
+            k = 1
+            while annotated[end+2+k].split("_")[0] != ')':
+                if annotated[end+2+k] == '__O':
+                    entity_type += '_'
+                else:
+                    entity_type += annotated[end+2+k].split("_")[0]
+                k += 1
+                # print(entity_type)
+            assert annotated[end+2+k].split("_")[0] == ')', "[xxx] should be follow by (yyy)"
+            
+            print(annotated[start:end])
+            # print(annotated[end+2:end+2+k])
+            print(entity_type)
+ 
+            # assert annotated[end + 1].split("_")[0] == "(" and annotated[end + 3].split("_")[0] == ")", "wrong format"
+            # entity_type = annotated[end + 2].split("_")[0]
+            
             # annotate entity
             for j in range(start, end):
                 if j == start:
                     annotated[j] = annotated[j].split("_")[0] + "_B-" + entity_type
                 else:
                     annotated[j] = annotated[j].split("_")[0] + "_I-" + entity_type
+            
             # remove [], (entity type)
             annotated_final = []
             for i in range(len(annotated)):
-                if i not in [start - 1, end, end + 1, end + 2, end + 3]:
+                index_square_brackets = [start-1, end]
+                index_brack_left = [end+1]
+                index_entitiy_type = []
+                for num in range(k+1):
+                    index_entitiy_type.append(end+2+num)
+
+                unwanted_index = index_square_brackets + index_brack_left + index_entitiy_type
+                if i in unwanted_index:
+                    continue
                     # print(annotated[i])
+                else:
                     annotated_final.append(annotated[i])
+            
             # recursive
             return annotate_segmented_text(annotated_final)
 
@@ -321,7 +361,7 @@ def extract_entity(text, lang=None):
                 except:
                     pass
                 words.append(t)
-
+    print(''.join(words))
     annotated = [word + "_O" for word in words]  # initialization
     annotated = annotate_segmented_text(annotated)
     result = remove_punctuation_from_annotated_text(annotated)
@@ -338,5 +378,15 @@ if __name__ == '__main__':
     # results = extract_entity(text, 'zh')
     # for r in results:
     #     print(r)
-    make_dataset(dataset_path="./data/nlu/dataset.xlsx", split=True, delete_and_update=False)
+    
+    # make_dataset(dataset_path="./data/nlu/dataset.xlsx", split=True, delete_and_update=False)
+    
+    create_intent_label(
+        input_path='data/from_ct/20231213/dataset.xlsx', 
+        output_path='./data/project/immd/intent/intent_label_new.txt'
+    )
 
+    create_slot_label(
+        input_path='data/from_ct/20231213/dataset.xlsx',
+        output_path='./data/project/immd/keyword/slot_label_new.txt'
+    )
