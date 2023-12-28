@@ -1,7 +1,7 @@
 version: '3'
 services:
   ct_immd_nlp:
-    image: ct-immd-nlp:v0.9
+    image: ct-immd-nlp:v0.91
     ports:
       - "8080:8080"
     volumes:

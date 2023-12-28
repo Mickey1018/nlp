@@ -1,12 +1,10 @@
 import dill as pickle
 import joblib
 from paddlenlp.transformers import AutoModel, AutoTokenizer, AutoModelForSequenceClassification
-from configuration import Config
-from nlu_infer import ErnieTokenizer, ErnieModel, ErnieMTokenizer, ErnieMModel
-from preprocessing import download_nltk
-from paddlenlp import Taskflow
+from paddlenlp.transformers import ErnieTokenizer, ErnieModel, ErnieMTokenizer, ErnieMModel
+# from preprocessing import download_nltk
 
-download_nltk()
+# download_nltk()
 
 # senta = Taskflow("sentiment_analysis", device_id=-1)
 # similarity_en = Taskflow("text_similarity", model="rocketqa-medium-cross-encoder", device_id=-1)
