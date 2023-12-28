@@ -267,6 +267,7 @@ def make_dataset(project_path, lang=None, split=False, test_size=0.2, delete_and
 
 
 def annotate_segmented_text(annotated: list):
+    text = " ".join([a.split("_")[0] for a in annotated])
     for i in range(len(annotated)):
         if annotated[i].split("_")[0] == "[":
             
@@ -279,7 +280,9 @@ def annotate_segmented_text(annotated: list):
                 end += 1
           
             # get entity type
-            assert annotated[end+1].split("_")[0] == '(', "[xxx] should be follow by (yyy)"
+            err_msg = f"Problems occur in following text:\n{text}\n"
+            err_msg += "Reminder: [xxx] should be follow by (yyy)"
+            assert annotated[end+1].split("_")[0] == '(', err_msg
             entity_type = annotated[end+2].split("_")[0]
             k = 1
             while annotated[end+2+k].split("_")[0] != ')':
@@ -289,7 +292,7 @@ def annotate_segmented_text(annotated: list):
                     entity_type += annotated[end+2+k].split("_")[0]
                 k += 1
                 # print(entity_type)
-            assert annotated[end+2+k].split("_")[0] == ')', "[xxx] should be follow by (yyy)"
+            assert annotated[end+2+k].split("_")[0] == ')', err_msg
             
             print(annotated[start:end])
             # print(annotated[end+2:end+2+k])
@@ -385,12 +388,12 @@ if __name__ == '__main__':
         delete_and_update=False
         )
     
-    # create_intent_label(
-    #     input_path='data/from_ct/20231213/dataset.xlsx', 
-    #     output_path='./data/project/immd/intent/intent_label_new.txt'
-    # )
-# 
-    # create_slot_label(
-    #     input_path='data/from_ct/20231213/dataset.xlsx',
-    #     output_path='./data/project/immd/keyword/slot_label_new.txt'
-    # )
+    create_intent_label(
+        input_path='data/from_ct/20231213/dataset.xlsx', 
+        output_path='./data/project/immd/intent/intent_label_new.txt'
+    )
+
+    create_slot_label(
+        input_path='data/from_ct/20231213/dataset.xlsx',
+        output_path='./data/project/immd/keyword/slot_label_new.txt'
+    )

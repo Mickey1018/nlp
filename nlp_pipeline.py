@@ -38,7 +38,7 @@ from faq_processing import faq_processing
 from publish import publish_faq, delete_faq
 # from push2neo4j import push_data
 
-from nlu_data import make_dataset
+from nlu_data import make_dataset, create_intent_label, create_slot_label
 from nlu_train import nlu_model_train
 
 logger = logging.getLogger("Rotating Log")
@@ -64,59 +64,6 @@ def get_parser():
     # parser.add_argument('--develop', dest='develop', action='store_true')
     # parser.set_defaults(develop=False)
     return parser
-
-
-def get_mall_estate_ids():
-    # retrieve malls and estates
-    malls = []
-    estates = []
-    with open(Config.site_id_malls, "r", encoding="utf-8") as f_mall, open(Config.site_id_estates, "r", encoding="utf-8") as f_estate:
-        lines_mall = f_mall.readlines()
-        for line in lines_mall:
-            malls.append(line.strip())
-        lines_estate = f_estate.readlines()
-        for line in lines_estate:
-            estates.append(line.strip())
-    
-    return malls, estates
-
-
-def convert_dict(slot_list):
-
-    # {
-    #     entity_type1: [e1, e2, ...], 
-    #     entity_type2: [d1, d2, ...]
-    # }
-
-    if not slot_list:
-        return None
-
-    new_dict = {}
-
-    for slot_dict in slot_list:
-        entity_type = slot_dict["type"]
-        entity_name = slot_dict["text"]
-
-        if not new_dict.get(entity_type):
-            new_dict[entity_type] = []
-            new_dict[entity_type].append(entity_name)
-
-        else:
-            new_dict[entity_type].append(entity_name)
-
-    return new_dict
-
-
-def get_path(intent):
-    if not intent:
-        return 'faq'
-    intent = intent.lower()
-    if intent in ["chat", "chat_greeting", "chat_violent"]:
-        return 'small_talk'
-    # elif intent in faq_topics:
-    #     return 'faq'
-    else:
-        return 'faq'
 """
 
 def nlu(input_text, project):
@@ -163,19 +110,6 @@ def nlu(input_text, project):
     return intent_result, slot_result
     # return intent, intent_prob, slots
 
-"""
-def get_template_faq_df(dir):
-    assert os.path.isdir(dir)
-    file_name_list = os.listdir(dir)
-    assert file_name_list, f"no file found under {dir}."
-    merge_df = pd.DataFrame()
-    file_path_list = [os.path.join(dir, i) for i in file_name_list]
-    df_list = [pd.read_excel(i) for i in file_path_list]
-    for df in df_list:
-        merge_df = merge_df.append(df, ignore_index=True)
-    df = df.drop_duplicates()
-    return df
-"""
 
 @app.route('/api/classify_email_and_get_keywords', methods=['GET', 'POST'])
 def get_topic_and_keywords():
@@ -290,357 +224,45 @@ def get_topic_and_keywords():
         results_json = json.dumps(results, ensure_ascii=False, indent=3)
         return results_json
 
-"""
-# Process FAQ Files
-@app.route('/api/faq_processing', methods=['GET', 'POST'])
-def api_faq_processing():
-    # get json contents
+# Check data
+@app.route('/api/get_intent_and_keyword_type', methods=['GET', 'POST'])
+def get_intent_and_keyword_type():
     try:
         content = request.json
+        project_path = content.get("project_path")
+
     except Exception as e:
-        logging.error("Exception occurred", exc_info=True)
         results = {
-            "success": False,
-            "error": {
-                "reason": str(e) 
-            }
-        }
-        print("invalid json format")
-        return json.dumps(results, ensure_ascii=False, indent=3)
-    
-    site_id = content.get("site_id")
-    version = content.get("version")
-    process = content.get("process")
-    
-    if process:
-        
-        file_path = process.get("file_path")
-        prev_file_path = process.get("prev_file_path")
-        action = process.get("action")
-        
-        if action not in ["create", "update", "delete"]:
-            results = {
-                    "success": False,
-                    "error": {
-                        "reason": "wrong action is given, possible actions are create, update, or delete" 
-                    }
-                }
-            return json.dumps(results, ensure_ascii=False, indent=3)
-        
-        if action == "update":
-            if not file_path or not prev_file_path:
-                results = {
-                    "success": False,
-                    "error": {
-                        "reason": "file_path or prev_file path not provided" 
-                    }
-                }
-                return json.dumps(results, ensure_ascii=False, indent=3)
-        
-        error = faq_processing(file_path, site_id, version, action, prev_file_path)
-        
-        if not error:
-            results = {
-                "success": True,
-                "data": {}
-            }
-        
-        else:
-            results = {
                 "success": False,
                 "error": {
-                    "reason": str(error) 
-                }
+                    "reason": str(e) 
+                    }
             }
-            print(error)
-
-        return json.dumps(results, ensure_ascii=False, indent=3)
-
-
-# Process KG files
-@app.route('/api/kg_processing', methods=['GET', 'POST'])
-def api_kg_processing():
-    try:
-        content = request.json
-    except Exception as e:
-        logging.error("Exception occurred", exc_info=True)
-        results = {
-            "success": False,
-            "error": {
-                "reason": str(e) 
-            }
-        }
         return json.dumps(results, ensure_ascii=False, indent=3)
     
-    site_id = content.get("site_id")
-    version = content.get("version")
-    process = content.get("process")
-    history = content.get("history")
-    action = process.get("action")
-    file_path = process.get("file_path")
-    prev_file_path = process.get("prev_file_path")
-    callback = content.get("callback")
-    callback_id = content.get("callback_id")
+    excel_path = os.path.join(project_path, 'excel', 'dataset.xlsx')
+    intent_output_path = os.path.join(project_path, 'intent', 'intent_label.txt')
+    slot_output_path = os.path.join(project_path, 'keyword', 'slot_label.txt')
 
     try:
-        assert action in ["create", "update", "delete"]
+        create_intent_label(excel_path, output_path=intent_output_path)
+        create_slot_label(excel_path, output_path=slot_output_path)
+
     except Exception as e:
-        logging.error("Exception occurred", exc_info=True)
         results = {
-            "success": False,
-            "callback_id": callback_id,
-            "error": {
-                "reason": "wrong action is given, possible actions are create, update, or delete" 
+                "success": False,
+                "error": {
+                    "reason": str(e)
+                    }
             }
-        }
         return json.dumps(results, ensure_ascii=False, indent=3)
     
-    try:
-        assert version in ["editing", "production"]
-    except Exception as e:
-        logging.error("Exception occurred", exc_info=True)
-        results = {
-            "success": False,
-            "callback_id": callback_id,
-            "error": {
-                "reason": "wrong version is given, possible versions are editing or production"
-            }
-        }
-        return json.dumps(results, ensure_ascii=False, indent=3)
-
-    if action == "update":
-        if not file_path or not prev_file_path:
-            results = {
-            "success": False,
-            "callback_id": callback_id,
-            "error": {
-                "reason": "file_path or prev_file path not provided" 
-                }
-            }
-            return json.dumps(results, ensure_ascii=False, indent=3)
-    
-    try:
-        executor.submit(job_kg_processing, callback, callback_id, site_id, version, action, file_path, prev_file_path, history)
-        results = {
-            "success": True,
-            "callback_id": callback_id
-        }
-        return json.dumps(results, ensure_ascii=False, indent=3)
-    
-    except Exception as e:
-        logging.error("Exception occurred", exc_info=True)
-        results = {
-            "success": False,
-            "callback_id": callback_id,
-            "error": {
-                "reason": str(e) 
-                }
-            }
-        return json.dumps(results, ensure_ascii=False, indent=3)
-
-
-def job_kg_processing(callback, callback_id, site_id, version, action, file_path, prev_file_path, history):    
-    
-    print("start processing KG")
-    try:
-        error = kg_processing(session, file_path, site_id, version, action, prev_file_path, history)
-    except Exception as e:
-        logging.error("Exception occurred", exc_info=True)
-        json_obj = {
-            "success": False,
-            "callback_id": callback_id,
-            "error": {
-                "reason": str(error) 
-            }
-        }
-        requests.post(callback, json=json_obj, verify=False)
-    
-    if not error:
-        json_obj = {
-            "success": True,
-            "callback_id": callback_id
-        }
-        print("processing KG sucessfully")
-    else:
-        json_obj = {
-            "success": False,
-            "callback_id": callback_id,
-            "error": {
-                "reason": str(error) 
-            }
-        }
-        print("processing KG not sucessfully: ", str(error))
-    print(f"start callback to {callback}")
-    try:
-        requests.post(callback, json=json_obj, verify=False)
-        print(f"finish callback to {callback}")
-    except Exception as e:
-        logging.error("Exception occurred", exc_info=True)
-        print(e)
-
-
-# Process Publishing
-@app.route('/api/publish_data', methods=['GET', 'POST'])
-def api_publish_data():
-    try:
-        content = request.json
-        pprint(content)
-    except Exception as e:
-        logging.error("Exception occurred", exc_info=True)
-        results = {
-            "success": False,
-            "error": {
-                "reason": str(e) 
-            }
-        }
-        print(e)
-        return json.dumps(results, ensure_ascii=False, indent=3)
-    
-    callback = content.get("callback")
-    callback_id = content.get("callback_id")
-    site_id = content.get("site_id")
-    
-    # list contains json objects {"file_path": "/path/to/file"}
-    faq_file_paths_list = content.get("datafile").get("production").get("faq")
-    kg_file_paths_list = content.get("datafile").get("production").get("kg")
-    
-    if not faq_file_paths_list and not kg_file_paths_list:
-        results = {
-            "success": False,
-            "callback_id": callback_id,
-            "error": {
-                "reason": "Neither faq files or kg files are not provided" 
-            }
-        }
-        print("Neither faq files or kg files are not provided")
-        return json.dumps(results, ensure_ascii=False, indent=3)
-    
-    executor.submit(job_publish_data, 
-        callback, callback_id, site_id, kg_file_paths_list, faq_file_paths_list)
-
+    # return API result
     results = {
         "success": True,
-        "callback_id": callback_id
+        "data": f"Success! Updated for paths {intent_output_path} and {slot_output_path}"
     }
-
     return json.dumps(results, ensure_ascii=False, indent=3)
-
-
-def job_publish_data(callback, callback_id, site_id, kg_file_paths_list, faq_file_paths_list):    
-    print("start pulishing")
-
-    success = True
-
-    if faq_file_paths_list:
-        try:
-            for faq_json in faq_file_paths_list:
-                faq_file_path = faq_json.get("file_path")
-                action = faq_json.get("action")
-                if action == "delete":
-                    delete_faq(faq_file_path)
-                elif action == "publish":
-                    print("ready to publish faq or small talk")
-                    error = publish_faq(session, site_id, faq_file_path)
-                    if error:
-                        success = False
-                        json_obj = {
-                            "success": False,
-                            "callback_id": callback_id,
-                            "error": {
-                                "reason": str(error) 
-                            }
-                        }
-                        requests.post(callback, json=json_obj, verify=False)
-        
-        except Exception as error:
-            logging.error("Exception occurred", exc_info=True)
-            json_obj = {
-                "success": False,
-                "callback_id": callback_id,
-                "error": {
-                    "reason": str(error) 
-                }
-            }
-            requests.post(callback, json=json_obj, verify=False)
-    
-
-    if kg_file_paths_list:
-        try:
-            in_use_file_list = []
-            for kg_json in kg_file_paths_list:
-                if not kg_json.get("action"):
-                    in_use_file_list.append(kg_json.get("file_path"))
-                else:
-                    if kg_json.get("action") not in ["delete", "publish"]:
-                        in_use_file_list.append(kg_json.get("file_path"))
-
-            for kg_json in kg_file_paths_list:
-                kg_file_path = kg_json.get("file_path")
-                kg_file_time = kg_json.get("timecreated")
-                action = kg_json.get("action")
-                
-                if action == "publish":
-                    try:
-                        error = publish_graph(session, site_id, kg_file_path=kg_file_path, in_use_file_list=in_use_file_list)
-                        if error:
-                            print("error from publishing KG: ", error)
-                            success = False
-                            json_obj = {
-                                "success": False,
-                                "callback_id": callback_id,
-                                "error": {
-                                    "reason": str(error) 
-                                }
-                            }
-                            requests.post(callback, json=json_obj, verify=False)
-                    except Exception as error:
-                        logging.error("Exception occurred", exc_info=True)
-                        json_obj = {
-                            "success": False,
-                            "callback_id": callback_id,
-                            "error": {
-                                "reason": str(error) 
-                            }
-                        }
-                        requests.post(callback, json=json_obj, verify=False)
-
-
-                elif action == "delete":
-                    try:
-                        delete_file_name = kg_file_path.split("_")[-1][:-5]
-                        session.run(f"match (n) where n.site_id='{site_id}' and n.mode='production' and n.file_name='{delete_file_name}' detach delete n")
-                    except Exception as error:
-                        logging.error("Exception occurred", exc_info=True)
-                        json_obj = {
-                        "success": False,
-                        "callback_id": callback_id,
-                        "error": {
-                            "reason": str(error) 
-                            }
-                        }
-                        requests.post(callback, json=json_obj, verify=False)
-        
-
-        except Exception as error:
-            logging.error("Exception occurred", exc_info=True)
-            json_obj = {
-                "success": False,
-                "callback_id": callback_id,
-                "error": {
-                    "reason": str(error) 
-                }
-            }
-            requests.post(callback, json=json_obj, verify=False)
-    
-    if success:
-        json_obj = {
-            "success": True,
-            "callback_id": callback_id
-        }
-    
-        requests.post(callback, json=json_obj, verify=False)
-        print("finish pulishing")
-"""
 
 
 # Train NLP modes
@@ -733,7 +355,7 @@ def job_train_nlu(training_id, project_path):
             logger,
             project_path, 
             lang=None, 
-            num_epoch=1, 
+            num_epoch=50, 
             batch_size=4, 
             max_seq_len=512, 
             learning_rate=3e-5,
@@ -745,7 +367,6 @@ def job_train_nlu(training_id, project_path):
         )
         jobs[training_id]["result_ner"] = result_ner
         logger.info('end training for ner model')
-
 
     except Exception as e:
         # update job status with error message
@@ -831,81 +452,7 @@ def get_training_job_status():
         logger.info(json_results)
         return json_results
 
-"""
-# Train NLP modes
-@app.route('/api/train_email_classifier_not_async', methods=['GET', 'POST'])
-def train_nlp_models():
-    try:
-        content = request.json
-        project_path = content.get("project_path")
 
-    except Exception as e:
-        results = {
-                "success": False,
-                "error": {
-                    "reason": str(e) 
-                    }
-            }
-        return json.dumps(results, ensure_ascii=False, indent=3)
-    
-    # use nlu_data.py to convert excel to train data and test data
-    data_ok, err_message = make_dataset(project_path, split=True, delete_and_update=False)
-    
-    if not data_ok:
-        results = {
-                "success": False,
-                "error": {
-                    "reason": err_message 
-                    }
-            }
-        json_results = json.dumps(results, ensure_ascii=False, indent=3)
-        logger.info(json_results)
-        return json_results
-
-    logger.info("dataset is ok!")
-    logger.info("now moving to model training section!")
-
-    # use nlu_train.py to fine-tune nlp model
-    train_success = True
-
-    try:
-        nlu_model_train(
-            project_path, 
-            lang=None, 
-            num_epoch=50, 
-            batch_size=16, 
-            max_seq_len=512, 
-            learning_rate=3e-5,
-            weight_decay=0.01, 
-            warmup_proportion=0.1, 
-            max_grad_norm=1.0, 
-            seed=666, 
-            log_step=50, 
-            eval_step=100, 
-            use_gpu=True
-        )
-
-    except Exception as e:
-        train_success = False
-        results = {
-                "success": False,
-                "error": {
-                    "reason": str(e)
-                    }
-            }
-        json_results = json.dumps(results, ensure_ascii=False, indent=3)
-        logger.info("Training Not success!")
-        logger.info(json_results)
-        return json_results
-
-    if train_success:
-        logger.info("Training success!")
-        results = {
-                "success": True
-            }
-        return json.dumps(results, ensure_ascii=False, indent=3)
-
-"""
 # Health Check
 @app.route('/healthy', methods=['GET'])
 def check_health():
@@ -914,53 +461,6 @@ def check_health():
     }
     return json.dumps(results, ensure_ascii=False, indent=3)
 
-
-"""
-# Get latest kg from VMS
-def get_latest_kg_from_vms(url, session, action="create"):
-    responses = requests.get(url, verify=False).json()
-    for response in responses:
-        site_id = response.get("site_id")
-        print(site_id)
-        kg_excel_list_editing = response.get("editing").get("kg")
-        kg_excel_list_production = response.get("production").get("kg")
-        print(kg_excel_list_editing)
-        print(kg_excel_list_production)
-
-        if kg_excel_list_editing:
-            version = "editing"
-            for i in range(len(kg_excel_list_editing)):
-                kg_excel_info = kg_excel_list_editing[i]
-                kg_excel_file_path = kg_excel_info.get("file_path")
-                kg_excel_time = kg_excel_info.get("timecreated")
-                file_name = kg_excel_file_path.split("_")[-1][:-5]
-                query = f"match (n) where n.site_id='{site_id}' and n.mode='{version}' and n.file_name='{file_name}' return n"
-                results = session.run(query).values()
-                print(f'results for {query}: ', results)
-                if not results:
-                    try:
-                        kg_processing(session, kg_excel_file_path, site_id, version, action)
-                        logging.info(f'sucessfully build graph for site {site_id} in {version} version!')
-                    except Exception as e:
-                        logging.error(f'failed to build graph for site {site_id} in {version} version with the following reason: \n{e}')
-        
-        if kg_excel_list_production:
-            version = "production"
-            for i in range(len(kg_excel_list_production)):
-                kg_excel_info = kg_excel_list_production[i]
-                kg_excel_file_path = kg_excel_info.get("file_path")
-                kg_excel_time = kg_excel_info.get("timecreated")
-                file_name = kg_excel_file_path.split("_")[-1][:-5]
-                query = f"match (n) where n.site_id='{site_id}' and n.mode='{version}' and n.file_name='{file_name}' return n"
-                results = session.run(query).values()
-                print(f'results for {query}: ', results)
-                if not results:
-                    try:
-                        kg_processing(session, kg_excel_file_path, site_id, version, action)
-                        logging.info(f'sucessfully build graph for site {site_id} in {version} version!')
-                    except Exception as e:
-                        logging.error(f'failed to build graph for site {site_id} in {version} version with the following reason: \n{e}')
-"""
 
 # Main Program
 if __name__ == '__main__':
@@ -1057,21 +557,9 @@ if __name__ == '__main__':
     converter = opencc.OpenCC('t2s.json')
     converter_s2t = opencc.OpenCC('s2t.json')
     
-    # retrieve faq topics
-    # faq_topics = []
-    # with open(Config.faq_topics, "r", encoding="utf-8") as f:
-    #     lines = f.readlines()
-    #     for line in lines:
-    #         faq_topics.append(line.strip())
-
-    
     ########################################################################################################
     # LOAD MODEL
     ########################################################################################################
-    # Simiarity Model
-    # senta = Taskflow("sentiment_analysis", device_id=-1)
-    # similarity_en = Taskflow("text_similarity", model="rocketqa-medium-cross-encoder", device_id=-1)
-    # similarity_zh = Taskflow("text_similarity", model="simbert-base-chinese", device_id=-1)
 
     # NLU Model
     # load nlu tokenizer and joint model for chinese and english
@@ -1101,31 +589,6 @@ if __name__ == '__main__':
     # if os.path.exists(Config.nlu_model_ckpt_path_multi):
     #     nlu_model = JointModel_M(ernie, len(slot2id), len(intent2id), dropout=0.1)
     #     nlu_model.load_dict(paddle.load(Config.nlu_model_ckpt_path_multi))
-
-
-
-    ########################################################################################################
-    # Get latest Graphs
-    ########################################################################################################
-    """
-    testing_ok = False
-    while not testing_ok:
-        try:
-            testing_query = f"match (n) where n.site_id='oc' and n.mode='editing' and n.file_name='mall' return n"
-            results = session.run(testing_query).values()
-            testing_ok = True
-            print("neo4j testing ok.")
-        except:
-            logging.error("Exception occurred", exc_info=True)
-            print("neo4j testing is not ok, try connecting neo4j again 10 seconds later.")
-            os.system('neo4j start')
-            time.sleep(10)
-
-    try:
-        get_latest_kg_from_vms(kms_knowledge_list_url, session)
-    except Exception as e:
-        logging.error("Exception occurred", exc_info=True)
-    """
     
     ########################################################################################################
 
