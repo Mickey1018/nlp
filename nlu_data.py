@@ -283,7 +283,7 @@ def annotate_segmented_text(annotated: list):
             entity_type = annotated[end+2].split("_")[0]
             k = 1
             while annotated[end+2+k].split("_")[0] != ')':
-                if annotated[end+2+k] == '__O':
+                if annotated[end+2+k] == '__O' or ' _O':
                     entity_type += '_'
                 else:
                     entity_type += annotated[end+2+k].split("_")[0]
