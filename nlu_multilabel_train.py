@@ -60,7 +60,7 @@ def multilable_classification_train(
     max_seq_length=1024, 
     batch_size=4, 
     learning_rate=3e-5, 
-    epochs=10, 
+    epochs=30, 
     init_from_ckpt=None, 
     warmup_steps=0, 
     weight_decay=0.0, 

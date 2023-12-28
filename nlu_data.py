@@ -379,14 +379,18 @@ if __name__ == '__main__':
     # for r in results:
     #     print(r)
     
-    # make_dataset(dataset_path="./data/nlu/dataset.xlsx", split=True, delete_and_update=False)
+    make_dataset(
+        project_path="./data/project/immd/", 
+        split=True, 
+        delete_and_update=False
+        )
     
-    create_intent_label(
-        input_path='data/from_ct/20231213/dataset.xlsx', 
-        output_path='./data/project/immd/intent/intent_label_new.txt'
-    )
-
-    create_slot_label(
-        input_path='data/from_ct/20231213/dataset.xlsx',
-        output_path='./data/project/immd/keyword/slot_label_new.txt'
-    )
+    # create_intent_label(
+    #     input_path='data/from_ct/20231213/dataset.xlsx', 
+    #     output_path='./data/project/immd/intent/intent_label_new.txt'
+    # )
+# 
+    # create_slot_label(
+    #     input_path='data/from_ct/20231213/dataset.xlsx',
+    #     output_path='./data/project/immd/keyword/slot_label_new.txt'
+    # )

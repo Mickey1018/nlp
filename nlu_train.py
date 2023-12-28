@@ -18,6 +18,7 @@ import random
 import jieba
 import opencc
 from configuration import Config
+from paddlenlp.utils.log import logger
 
 
 def load_dict(path):
@@ -336,7 +337,22 @@ class MultiLabelClassificationScore(object):
             print("\n")
 
 
-def nlu_model_train(logger, project_path, lang=None, num_epoch=100, batch_size=16, max_seq_len=512, learning_rate=3e-5, weight_decay=0.01, warmup_proportion=0.1, max_grad_norm=1.0, seed=666, log_step=50, eval_step=100, use_gpu=True):
+def nlu_model_train(
+    logger, 
+    project_path, 
+    lang=None, 
+    num_epoch=50, 
+    batch_size=8, 
+    max_seq_len=512, 
+    learning_rate=3e-5, 
+    weight_decay=0.01, 
+    warmup_proportion=0.1, 
+    max_grad_norm=1.0, 
+    seed=666, 
+    log_step=50, 
+    eval_step=100, 
+    use_gpu=True
+    ):
     """
     intent_path: ./data/intent_label_mall.txt
     slot_path: ./data/slot_label_mall.txt
@@ -505,18 +521,7 @@ def evaluate(joint_model, data_loader, intent_metric, slot_metric):
 
 if __name__=="__main__":
 
-    lang = None
-    batch_size = 16
-    max_seq_len = 512
-    num_epoch = 100
-    learning_rate = 3e-5
-    weight_decay = 0.01
-    warmup_proportion = 0.1
-    max_grad_norm = 1.0
-    log_step = 50
-    eval_step = 100
-    seed = 666
-
+    """
     intent_path = Config.nlu_model_intent_label_path
     slot_path = Config.nlu_model_slot_label_path
     train_path = Config.nlu_model_train_dir
@@ -588,8 +593,8 @@ if __name__=="__main__":
 
     intent_metric = MultiLabelClassificationScore(id2intent)
     slot_metric = SeqEntityScore(id2slot)
-
-    nlu_model_train(intent_path, slot_path, train_path, dev_path, save_path, lang)
+    """
+    nlu_model_train(logger, 'data/project/immd')
 
 
 
