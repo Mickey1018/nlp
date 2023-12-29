@@ -337,23 +337,39 @@ def job_train_nlu(training_id, project_path):
     train_success = True
 
     try:
-        # train intent model
+        # Train intent model
         logger.info('start training for intent model')
-        result_intent = multilable_classification_train(
+        
+        # get start time for intent training
+        now = datetime.now()
+        training_start_time_intent = now.strftime("%d/%m/%Y %H:%M:%S")
+        jobs[training_id]["training_start"]["intent"] = training_start_time_intent
+        
+        result_intent, training_end_time_intent = multilable_classification_train(
             training_id, 
-            project_path, 
+            project_path,
+            training_start_time=training_start_time_intent,
             batch_size=1, 
             epochs=5,
             logging_steps=5, 
         )
         jobs[training_id]["result_intent"] = result_intent
+        jobs[training_id]["training_end"]["intent"] = training_end_time_intent
         logger.info('end training for intent model')
 
-        # train ner model
+
+        # Train ner model
         logger.info('start training for ner model')
-        result_ner = nlu_model_train(
+
+        # get start time for intent training
+        now = datetime.now()
+        training_start_time_ner = now.strftime("%d/%m/%Y %H:%M:%S")
+        jobs[training_id]["training_start"]["ner"] = training_start_time_ner
+
+        result_ner, training_end_time_ner = nlu_model_train(
             logger,
-            project_path, 
+            project_path,
+            training_start_time=training_start_time_ner,
             lang=None, 
             num_epoch=50, 
             batch_size=4, 
@@ -366,6 +382,7 @@ def job_train_nlu(training_id, project_path):
             eval_step=100
         )
         jobs[training_id]["result_ner"] = result_ner
+        jobs[training_id]["training_end"]["ner"] = training_end_time_ner
         logger.info('end training for ner model')
 
     except Exception as e:
@@ -414,18 +431,26 @@ def get_training_job_status():
     
     try:
         status = jobs[training_id].get("status")
-        training_start = jobs[training_id].get("training_start")
-        training_end = jobs[training_id].get("training_end")
-        training_result_ner = jobs[training_id].get("result_ner")
+        training_start_intent = jobs[training_id]["training_start"].get("intent")
+        training_start_ner = jobs[training_id]["training_start"].get("ner")
+        training_end_intent = jobs[training_id]["training_end"].get("intent")
+        training_end_ner = jobs[training_id]["training_end"].get("ner")
         training_result_intent = jobs[training_id].get("result_intent")
+        training_result_ner = jobs[training_id].get("result_ner")
 
         results = {
             "success": True,
             "data": {
                 "training_id": training_id,
                 "status": status,
-                "training_start": training_start,
-                "training_end": training_end,
+                "training_start": {
+                    "intent": training_start_intent,
+                    "keyword": training_start_ner
+                }
+                "training_end": {
+                    "intent": training_end_intent,
+                    "keyword": training_end_ner
+                }
                 "result": {
                     "intent": training_result_intent,
                     "keyword": training_result_ner
@@ -556,41 +581,6 @@ if __name__ == '__main__':
     # create converter to convert zh-hk to zh-cn
     converter = opencc.OpenCC('t2s.json')
     converter_s2t = opencc.OpenCC('s2t.json')
-    
-    ########################################################################################################
-    # LOAD MODEL
-    ########################################################################################################
-
-    # NLU Model
-    # load nlu tokenizer and joint model for chinese and english
-    # nlu_transformer_zh = "ernie-3.0-xbase-zh"
-    # nlu_transformer_en = "ernie-2.0-base-en"
-    # nlu_transformer = "ernie-m-base"
-
-    # nlu_zh_tokenizer = ErnieTokenizer.from_pretrained(nlu_transformer_zh)
-    # nlu_en_tokenizer = ErnieTokenizer.from_pretrained(nlu_transformer_en)
-    # nlu_tokenizer = ErnieMTokenizer.from_pretrained(nlu_transformer)
-
-    # intent_path = Config.nlu_model_intent_label_path
-    # slot_path = Config.nlu_model_slot_label_path
-    # intent2id, id2intent = load_dict(intent_path)
-    # slot2id, id2slot = load_dict(slot_path)
-
-    # Initialize model
-    # ernie_zh = ErnieModel.from_pretrained(nlu_transformer_zh)
-    # nlu_model_zh_mall = JointModel(ernie_zh, len(slot2id_mall), len(intent2id_mall), dropout=0.1)
-    # nlu_model_zh_mall.load_dict(paddle.load(Config.nlu_model_ckpt_path_zh))
-
-    # ernie_en = ErnieModel.from_pretrained(nlu_transformer_en)
-    # nlu_model_en_mall = JointModel(ernie_en, len(slot2id_mall), len(intent2id_mall), dropout=0.1)
-    # nlu_model_en_mall.load_dict(paddle.load(Config.nlu_model_ckpt_path_en))
-    
-    # ernie = ErnieMModel.from_pretrained(nlu_transformer)
-    # if os.path.exists(Config.nlu_model_ckpt_path_multi):
-    #     nlu_model = JointModel_M(ernie, len(slot2id), len(intent2id), dropout=0.1)
-    #     nlu_model.load_dict(paddle.load(Config.nlu_model_ckpt_path_multi))
-    
-    ########################################################################################################
 
     app.run(
         host=Config.server,

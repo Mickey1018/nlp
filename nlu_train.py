@@ -1,3 +1,4 @@
+from datetime import datetime
 import paddle
 import os
 import ast
@@ -339,7 +340,8 @@ class MultiLabelClassificationScore(object):
 
 def nlu_model_train(
     logger, 
-    project_path, 
+    project_path,
+    training_start_time=None,
     lang=None, 
     num_epoch=50, 
     batch_size=8, 
@@ -491,12 +493,32 @@ def nlu_model_train(
             global_step += 1
     logger.info("Finish training!")
 
+    now = datetime.now()
+    training_end_time = now.strftime("%d/%m/%Y %H:%M:%S")
+    
+    training_result = None
     if slot_best_f1 >= 0.85:
-        return 'good'
+        training_result = 'good'
     elif 0.7 <= slot_best_f1 < 0.85:
-        return 'acceptable'
+        training_result = 'acceptable'
     elif slot_best_f1 < 0.7:
-        return 'fail'
+        training_result = 'fail'
+
+    # write final results into text file
+    if not os.path.exists(os.path.join(dataset_dir, 'train_results')):
+        os.makedirs(os.path.join(dataset_dir, 'train_results'))
+    if not os.path.exists(os.path.join(dataset_dir, 'train_results', 'keyword')):
+        os.makedirs(os.path.join(dataset_dir, 'train_results', 'keyword'))
+    with open(os.path.join(dataset_dir, 'train_results', 'keyword', 'results.txt'), 'w', encoding='utf-8') as f:
+        f.write("training id: " + str(train_id) + '\n')
+        # f.write("Final best macro f1 score: %.5f\n" % (best_f1_score))
+        f.write("training status: " + '1 - success' + '\n')
+        if training_start_time:
+            f.write("training start time: " + training_start_time + '\n')
+        f.write("training start time: " + training_end_time + '\n')
+        f.write("training result: " + training_result + '\n')
+
+    return training_result, training_end_time
 
 
 def evaluate(joint_model, data_loader, intent_metric, slot_metric):

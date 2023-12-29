@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from datetime import datetime
 import argparse
 import functools
 import os
@@ -50,7 +51,8 @@ def params_saving(save_dir, device):
 
 def multilable_classification_train(
     train_id, 
-    dataset_dir, 
+    dataset_dir,
+    training_start_time=None, 
     model_name="ernie-3.0-xbase-zh", 
     seed=3, 
     device="gpu", 
@@ -193,21 +195,34 @@ def multilable_classification_train(
         logger.info("Current best macro f1 score: %.5f" % (best_f1_score))
     logger.info("Final best macro f1 score: %.5f" % (best_f1_score))
     
+    now = datetime.now()
+    training_end_time = now.strftime("%d/%m/%Y %H:%M:%S")
+
+    training_result = None
+    if best_f1_score >= 0.85:
+        training_result = 'good'
+    elif 0.7 <= best_f1_score < 0.85:
+        training_result = 'acceptable'
+    elif best_f1_score < 0.7:
+        training_result = 'fail'
+
     # write final results into text file
     if not os.path.exists(os.path.join(dataset_dir, 'train_results')):
         os.makedirs(os.path.join(dataset_dir, 'train_results'))
-    with open(os.path.join(dataset_dir, 'train_results', 'training_results.txt'), 'w', encoding='utf-8') as f:
+    if not os.path.exists(os.path.join(dataset_dir, 'train_results', 'intent')):
+        os.makedirs(os.path.join(dataset_dir, 'train_results', 'intent'))
+    with open(os.path.join(dataset_dir, 'train_results', 'intent', 'results.txt'), 'w', encoding='utf-8') as f:
         f.write("training id: " + str(train_id) + '\n')
-        f.write("Final best macro f1 score: %.5f\n" % (best_f1_score))
-    
+        # f.write("Final best macro f1 score: %.5f\n" % (best_f1_score))
+        f.write("training status: " + '1 - success' + '\n')
+        if training_start_time:
+            f.write("training start time: " + training_start_time + '\n')
+        f.write("training start time: " + training_end_time + '\n')
+        f.write("training result: " + training_result + '\n')
+
     logger.info("Save best macro f1 text classification model in %s" % (save_dir))
 
-    if best_f1_score >= 0.85:
-        return 'good'
-    elif 0.7 <= best_f1_score < 0.85:
-        return 'acceptable'
-    elif best_f1_score < 0.7:
-        return 'fail'
+    return training_result, training_end_time
 
 if __name__ == "__main__":
     multilable_classification_train(1, "data/project/immd")
