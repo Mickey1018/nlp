@@ -6,9 +6,9 @@ services:
       - "8080:8080"
     volumes:
       - /opt/email_classifier/nlp/data:/app/data/project
-      # - /opt/email_classifier/nlp/ckpt:/app/data/ckpt/nlu/multi
+      - /opt/email_classifier/nlp/log:/app/log
       # - ./nfs-data:/app/nfs-data
-      # - ./logs:/app/logs 
+
     command: >
       bash -c "python nlp_pipeline.py"
     # deploy:

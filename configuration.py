@@ -1,6 +1,6 @@
 class Config:
     server = "0.0.0.0"
-    port = 8081
+    port = 8080
     vabot_ssl_cert = './ss_vabot.crt'
     vabot_ssl_key = './ss_vabot.key'
     nlu_data_problem_path = './data/nlu/dataset_problems.txt'
